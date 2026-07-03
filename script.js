@@ -4,12 +4,10 @@ let currentFilter = 'all';
 let currentProduct = null;
 let currentImageIndex = 0;
 
-// Форматирование цены в рубли
 function formatPrice(price) {
     return price.toLocaleString('ru-RU') + ' ₽';
 }
 
-// Загрузка категорий из localStorage
 function loadCategories() {
     const stored = localStorage.getItem('shopCategories');
     if (stored) {
@@ -37,18 +35,18 @@ function renderCategories() {
         'Аксессуары': 'Аксессуары'
     };
     
-    let html = `<button class="cat active" data-cat="all">Все</button>`;
+    let html = `<button class="filter-chip active" data-cat="all">Все</button>`;
     
     for (const cat of categories) {
         const label = categoryNames[cat] || cat.charAt(0).toUpperCase() + cat.slice(1);
-        html += `<button class="cat" data-cat="${cat}">${label}</button>`;
+        html += `<button class="filter-chip" data-cat="${cat}">${label}</button>`;
     }
     
     container.innerHTML = html;
     
-    document.querySelectorAll('.cat').forEach(btn => {
+    document.querySelectorAll('.filter-chip').forEach(btn => {
         btn.addEventListener('click', function() {
-            document.querySelectorAll('.cat').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             currentFilter = this.dataset.cat;
             
@@ -61,7 +59,6 @@ function renderCategories() {
     });
 }
 
-// Загрузка товаров
 function loadProducts() {
     const stored = localStorage.getItem('shopProducts');
     if (stored) {
@@ -69,7 +66,7 @@ function loadProducts() {
             products = JSON.parse(stored);
             products = products.map(p => ({
                 ...p,
-                images: p.images || [p.img || 'https://images.unsplash.com/photo-1551503766-ac63dfa6401c?w=800'],
+                images: p.images || [p.img || 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=800'],
                 specs: p.specs || {},
                 tags: p.tags || [],
                 inStock: p.inStock !== undefined ? p.inStock : true
@@ -139,16 +136,19 @@ function renderProducts(items, animate = true) {
     if (!grid) return;
     
     if (!items || items.length === 0) {
-        grid.innerHTML = '<p style="text-align:center;color:#7b5f47;padding:40px 0;">Товары временно отсутствуют</p>';
+        grid.innerHTML = '<p style="text-align:center;color:#7b5f47;padding:40px 0;font-weight:300;">Товары временно отсутствуют</p>';
         return;
     }
     
     if (animate) {
         grid.innerHTML = Array(Math.min(items.length, 6)).fill(0).map(() => `
-            <div class="skeleton">
-                <div class="skeleton-image"></div>
-                <div class="skeleton-text"></div>
-                <div class="skeleton-text short"></div>
+            <div class="skeleton-row">
+                <div class="sk-image"></div>
+                <div class="sk-info">
+                    <div class="sk-line"></div>
+                    <div class="sk-line short"></div>
+                    <div class="sk-line tiny"></div>
+                </div>
             </div>
         `).join('');
         
@@ -168,34 +168,42 @@ function renderProducts(items, animate = true) {
                     'премиум': 'premium'
                 };
                 const cls = tagClasses[tag] || '';
-                return `<span class="product-tag ${cls}">${tag}</span>`;
+                return `<span class="row-tag ${cls}">${tag}</span>`;
             }).join('');
         }
         
         const stockHtml = p.inStock !== undefined ? `
-            <span class="product-stock ${p.inStock ? 'in-stock' : 'out-of-stock'}">
+            <span class="row-stock ${p.inStock ? 'in-stock' : 'out-of-stock'}">
                 ${p.inStock ? 'В наличии' : 'Нет в наличии'}
             </span>
         ` : '';
         
-        const imgSrc = p.images && p.images.length > 0 ? p.images[0] : 'https://images.unsplash.com/photo-1551503766-ac63dfa6401c?w=400';
+        const imgSrc = p.images && p.images.length > 0 ? p.images[0] : 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400';
         
         return `
-            <div class="product-card" style="animation-delay: ${(index * 0.05).toFixed(2)}s;" onclick="openProductModal(${p.id})">
-                <img src="${imgSrc}" class="product-image" alt="${p.name}" onerror="this.src='https://images.unsplash.com/photo-1551503766-ac63dfa6401c?w=400'">
-                <div class="product-name">${p.name}</div>
-                <div class="product-price">${formatPrice(p.price)}</div>
-                <div class="product-desc">${p.desc || 'Без описания'}</div>
-                <div class="product-footer">
-                    <div class="product-tags">${tagsHtml}</div>
-                    ${stockHtml}
+            <div class="product-row" style="animation-delay: ${(index * 0.04).toFixed(2)}s;" onclick="openProductModal(${p.id})">
+                <div class="row-image">
+                    <img src="${imgSrc}" alt="${p.name}" onerror="this.src='https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400'">
+                </div>
+                <div class="row-info">
+                    <div>
+                        <div class="row-header">
+                            <span class="row-name">${p.name}</span>
+                            <span class="row-price">${formatPrice(p.price)}</span>
+                        </div>
+                        <div class="row-desc">${p.desc || 'Без описания'}</div>
+                    </div>
+                    <div class="row-meta">
+                        <div class="row-tags">${tagsHtml}</div>
+                        ${stockHtml}
+                        <span class="row-arrow">→</span>
+                    </div>
                 </div>
             </div>
         `;
     }).join('');
 }
 
-// Модальное окно товара
 function openProductModal(id) {
     currentProduct = products.find(p => p.id === id);
     if (!currentProduct) return;
@@ -232,7 +240,7 @@ function openProductModal(id) {
         };
         tagsContainer.innerHTML = currentProduct.tags.map(tag => {
             const cls = tagClasses[tag] || '';
-            return `<span class="modal-tag product-tag ${cls}">${tag}</span>`;
+            return `<span class="modal-tag row-tag ${cls}">${tag}</span>`;
         }).join('');
     } else {
         tagsContainer.innerHTML = '';
@@ -241,7 +249,7 @@ function openProductModal(id) {
     const stockContainer = document.getElementById('modalStock');
     if (currentProduct.inStock !== undefined) {
         stockContainer.textContent = currentProduct.inStock ? '● В наличии' : '● Нет в наличии';
-        stockContainer.style.color = currentProduct.inStock ? '#2f402a' : '#6f3e2e';
+        stockContainer.style.color = currentProduct.inStock ? '#5a7a4a' : '#8a5a4a';
         stockContainer.style.display = 'block';
     } else {
         stockContainer.style.display = 'none';
@@ -259,7 +267,7 @@ function closeProductModal() {
 }
 
 function updateModalImage() {
-    const images = currentProduct.images || ['https://images.unsplash.com/photo-1551503766-ac63dfa6401c?w=800'];
+    const images = currentProduct.images || ['https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=800'];
     const imgElement = document.getElementById('modalImage');
     imgElement.src = images[currentImageIndex] || images[0];
     imgElement.alt = currentProduct.name;
@@ -275,25 +283,17 @@ function updateModalImage() {
 }
 
 function changeImage(direction) {
-    const images = currentProduct.images || ['https://images.unsplash.com/photo-1551503766-ac63dfa6401c?w=800'];
+    const images = currentProduct.images || ['https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=800'];
     currentImageIndex = (currentImageIndex + direction + images.length) % images.length;
     updateModalImage();
 }
 
-// Закрытие по Escape
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        closeProductModal();
-    }
-    if (e.key === 'ArrowLeft' && document.getElementById('productModal').classList.contains('active')) {
-        changeImage(-1);
-    }
-    if (e.key === 'ArrowRight' && document.getElementById('productModal').classList.contains('active')) {
-        changeImage(1);
-    }
+    if (e.key === 'Escape') closeProductModal();
+    if (e.key === 'ArrowLeft' && document.getElementById('productModal').classList.contains('active')) changeImage(-1);
+    if (e.key === 'ArrowRight' && document.getElementById('productModal').classList.contains('active')) changeImage(1);
 });
 
-// Синхронизация между вкладками
 window.addEventListener('storage', (e) => {
     if (e.key === 'shopProducts') {
         try {
@@ -316,7 +316,6 @@ window.addEventListener('storage', (e) => {
     }
 });
 
-// Загрузка
 document.addEventListener('DOMContentLoaded', () => {
     loadCategories();
     loadProducts();
