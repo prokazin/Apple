@@ -1,3 +1,7 @@
+// ===== УНИКАЛЬНЫЕ КЛЮЧИ ДЛЯ APPLE МАГАЗИНА =====
+const STORAGE_KEY = 'apple_shop_products';
+const CATEGORY_KEY = 'apple_shop_categories';
+
 let products = [];
 let categories = [];
 let currentFilter = 'all';
@@ -9,7 +13,7 @@ function formatPrice(price) {
 }
 
 function loadCategories() {
-    const stored = localStorage.getItem('shopCategories');
+    const stored = localStorage.getItem(CATEGORY_KEY);
     if (stored) {
         try {
             categories = JSON.parse(stored);
@@ -18,7 +22,7 @@ function loadCategories() {
         }
     } else {
         categories = ['iPhone', 'Mac', 'Watch', 'Аксессуары'];
-        localStorage.setItem('shopCategories', JSON.stringify(categories));
+        localStorage.setItem(CATEGORY_KEY, JSON.stringify(categories));
     }
     renderCategories();
 }
@@ -60,7 +64,7 @@ function renderCategories() {
 }
 
 function loadProducts() {
-    const stored = localStorage.getItem('shopProducts');
+    const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
         try {
             products = JSON.parse(stored);
@@ -127,7 +131,7 @@ function getDefaultProducts() {
             specs: { 'Дисплей': 'Always-On', 'GPS': 'Да', 'Цвет': 'Полуночный', 'Материал': 'Алюминий' }
         }
     ];
-    localStorage.setItem('shopProducts', JSON.stringify(defaults));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
     return defaults;
 }
 
@@ -136,7 +140,7 @@ function renderProducts(items, animate = true) {
     if (!grid) return;
     
     if (!items || items.length === 0) {
-        grid.innerHTML = '<p style="text-align:center;color:#7b5f47;padding:40px 0;font-weight:300;">Товары временно отсутствуют</p>';
+        grid.innerHTML = '<p style="text-align:center;color:#7b5f47;padding:40px 0;font-weight:400;">Товары временно отсутствуют</p>';
         return;
     }
     
@@ -295,7 +299,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 window.addEventListener('storage', (e) => {
-    if (e.key === 'shopProducts') {
+    if (e.key === STORAGE_KEY) {
         try {
             products = JSON.parse(e.newValue);
             const filtered = currentFilter === 'all' 
@@ -304,7 +308,7 @@ window.addEventListener('storage', (e) => {
             renderProducts(filtered, true);
         } catch (e) {}
     }
-    if (e.key === 'shopCategories') {
+    if (e.key === CATEGORY_KEY) {
         try {
             categories = JSON.parse(e.newValue);
             renderCategories();
