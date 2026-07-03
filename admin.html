@@ -157,7 +157,7 @@
     </div>
 
     <script>
-        // ===== УНИКАЛЬНЫЕ КЛЮЧИ =====
+        // ===== КЛЮЧИ =====
         const STORAGE_KEY = 'apple_shop_products';
         const CATEGORY_KEY = 'apple_shop_categories';
         const STATS_KEY = 'apple_shop_stats';
@@ -169,7 +169,7 @@
         let currentSort = '';
         let tempImages = [];
 
-        // ===== УНИВЕРСАЛЬНОЕ СЖАТИЕ =====
+        // ===== СЖАТИЕ =====
         function compressImageUniversal(file, maxWidth = 300, maxHeight = 300, quality = 0.6) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -206,7 +206,7 @@
             return false;
         }
 
-        // ===== КОНВЕРТАЦИЯ ВСЕХ ИЗОБРАЖЕНИЙ =====
+        // ===== КОНВЕРТАЦИЯ =====
         async function fixAllImages() {
             const stored = localStorage.getItem(STORAGE_KEY);
             if (!stored) { showToast('❌ Нет данных'); return; }
@@ -232,7 +232,7 @@
                 renderAdminList();
                 updateStats();
                 checkStorage();
-                showToast(`✅ Конвертировано ${fixed} изображений`);
+                showToast('✅ Конвертировано ' + fixed + ' изображений');
             } catch (e) { showToast('❌ Ошибка: ' + e.message); }
         }
 
@@ -257,7 +257,7 @@
                 renderAdminList();
                 updateStats();
                 checkStorage();
-                showToast(`🗑️ Удалено ${removed} битых изображений`);
+                showToast('🗑️ Удалено ' + removed + ' битых изображений');
             } catch (e) { showToast('❌ Ошибка: ' + e.message); }
         }
 
@@ -275,11 +275,7 @@
                         p.images.forEach(img => { if (isImageCorrupted(img)) corruptedCount++; });
                     }
                 });
-                statusEl.innerHTML = `
-                    ✅ ${parsed.length} товаров<br>
-                    📸 ${imagesCount} изображений ${corruptedCount > 0 ? '⚠️ ' + corruptedCount + ' битых' : '✅'}<br>
-                    📦 ${(totalSize / 1024).toFixed(1)} KB
-                `;
+                statusEl.innerHTML = '✅ ' + parsed.length + ' товаров<br>📸 ' + imagesCount + ' изображений' + (corruptedCount > 0 ? ' ⚠️ ' + corruptedCount + ' битых' : ' ✅') + '<br>📦 ' + (totalSize / 1024).toFixed(1) + ' KB';
             } catch (e) { statusEl.textContent = '❌ Данные повреждены'; }
         }
 
@@ -327,18 +323,16 @@
             const container = document.getElementById('categoriesAdminList');
             if (!container) return;
             if (categories.length === 0) { container.innerHTML = '<div class="empty-state">Нет категорий</div>'; return; }
-            container.innerHTML = categories.map(cat => `
-                <span class="category-tag">${cat.charAt(0).toUpperCase() + cat.slice(1)}
-                    <button class="remove-cat" onclick="deleteCategory('${cat}')">✕</button>
-                </span>
-            `).join('');
+            container.innerHTML = categories.map(cat => {
+                return '<span class="category-tag">' + cat.charAt(0).toUpperCase() + cat.slice(1) + '<button class="remove-cat" onclick="deleteCategory(\'' + cat + '\')">✕</button></span>';
+            }).join('');
         }
 
         function renderCategorySelect() {
             const select = document.getElementById('productCategory');
             if (!select) return;
             const currentValue = select.value || (categories.length > 0 ? categories[0] : '');
-            select.innerHTML = categories.map(cat => `<option value="${cat}">${cat.charAt(0).toUpperCase() + cat.slice(1)}</option>`).join('');
+            select.innerHTML = categories.map(cat => '<option value="' + cat + '">' + cat.charAt(0).toUpperCase() + cat.slice(1) + '</option>').join('');
             if (categories.includes(currentValue)) select.value = currentValue;
             else if (categories.length > 0) select.value = categories[0];
         }
@@ -357,7 +351,7 @@
 
         function deleteCategory(cat) {
             if (products.some(p => p.category === cat)) { showToast('❌ Есть товары в категории!'); return; }
-            if (!confirm(`Удалить "${cat}"?`)) return;
+            if (!confirm('Удалить категорию "' + cat + '"?')) return;
             categories = categories.filter(c => c !== cat);
             localStorage.setItem(CATEGORY_KEY, JSON.stringify(categories));
             renderCategoriesAdmin(); renderCategorySelect(); notifySite();
@@ -370,16 +364,14 @@
         }
 
         // ===== ХАРАКТЕРИСТИКИ =====
-        function addSpecRow(key = '', value = '') {
+        function addSpecRow(key, value) {
+            key = key || '';
+            value = value || '';
             const container = document.getElementById('specsContainer');
             if (!container) return;
             const row = document.createElement('div');
             row.className = 'spec-row';
-            row.innerHTML = `
-                <input type="text" class="admin-input spec-key" placeholder="Название" value="${key}" style="margin:0;">
-                <input type="text" class="admin-input spec-value" placeholder="Значение" value="${value}" style="margin:0;">
-                <button class="remove-spec" onclick="this.closest('.spec-row').remove()">✕</button>
-            `;
+            row.innerHTML = '<input type="text" class="admin-input spec-key" placeholder="Название" value="' + key + '" style="margin:0;"><input type="text" class="admin-input spec-value" placeholder="Значение" value="' + value + '" style="margin:0;"><button class="remove-spec" onclick="this.closest(\'.spec-row\').remove()">✕</button>';
             container.appendChild(row);
         }
 
@@ -399,7 +391,7 @@
             container.innerHTML = '';
             const keys = Object.keys(specs);
             if (keys.length === 0) { addSpecRow('', ''); return; }
-            keys.forEach(k => addSpecRow(k, specs[k]));
+            keys.forEach(function(k) { addSpecRow(k, specs[k]); });
         }
 
         // ===== ВХОД =====
@@ -425,101 +417,103 @@
         async function handleImageUpload(event) {
             const files = event.target.files;
             let loaded = 0;
-            for (const file of files) {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
                 if (file.size > 5 * 1024 * 1024) { showToast('❌ Файл слишком большой'); continue; }
                 try {
-                    tempImages.push(await compressImageUniversal(file, 300, 300, 0.6));
+                    var compressed = await compressImageUniversal(file, 300, 300, 0.6);
+                    tempImages.push(compressed);
                     loaded++;
                     renderImagePreviews();
                 } catch (err) { showToast('❌ Ошибка обработки'); }
             }
-            if (loaded > 0) showToast(`✅ Загружено ${loaded} изображений`);
+            if (loaded > 0) showToast('✅ Загружено ' + loaded + ' изображений');
             event.target.value = '';
         }
 
         function renderImagePreviews() {
-            const container = document.getElementById('imagePreviewContainer');
+            var container = document.getElementById('imagePreviewContainer');
             if (!container) return;
-            container.innerHTML = tempImages.map((img, i) => `
-                <div class="image-preview">
-                    <img src="${img}" alt="Фото" onerror="this.src='https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400'">
-                    <button class="remove-image" onclick="tempImages.splice(${i},1);renderImagePreviews()">✕</button>
-                </div>
-            `).join('');
+            var html = '';
+            for (var i = 0; i < tempImages.length; i++) {
+                html += '<div class="image-preview"><img src="' + tempImages[i] + '" alt="Фото" onerror="this.src=\'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400\'"><button class="remove-image" onclick="removeImage(' + i + ')">✕</button></div>';
+            }
+            container.innerHTML = html;
         }
 
-        // Drag & Drop
-        const uploadArea = document.getElementById('imageUploadArea');
+        function removeImage(index) {
+            tempImages.splice(index, 1);
+            renderImagePreviews();
+        }
+
+        var uploadArea = document.getElementById('imageUploadArea');
         if (uploadArea) {
-            uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
-            uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
-            uploadArea.addEventListener('drop', async (e) => {
+            uploadArea.addEventListener('dragover', function(e) { e.preventDefault(); uploadArea.classList.add('dragover'); });
+            uploadArea.addEventListener('dragleave', function() { uploadArea.classList.remove('dragover'); });
+            uploadArea.addEventListener('drop', async function(e) {
                 e.preventDefault();
                 uploadArea.classList.remove('dragover');
-                const files = e.dataTransfer.files;
-                let loaded = 0;
-                for (const file of files) {
+                var files = e.dataTransfer.files;
+                var loaded = 0;
+                for (var i = 0; i < files.length; i++) {
+                    var file = files[i];
                     if (file.type.startsWith('image/')) {
                         try {
-                            tempImages.push(await compressImageUniversal(file, 300, 300, 0.6));
+                            var compressed = await compressImageUniversal(file, 300, 300, 0.6);
+                            tempImages.push(compressed);
                             loaded++;
                             renderImagePreviews();
                         } catch (err) { showToast('❌ Ошибка'); }
                     }
                 }
-                if (loaded > 0) showToast(`✅ Загружено ${loaded} изображений`);
+                if (loaded > 0) showToast('✅ Загружено ' + loaded + ' изображений');
             });
         }
 
         // ===== ОТОБРАЖЕНИЕ СПИСКА =====
         function renderAdminList() {
-            const list = document.getElementById('adminProductList');
+            var list = document.getElementById('adminProductList');
             if (!list) return;
-            let filtered = [...products];
+            var filtered = products.slice();
             if (searchQuery) {
-                const q = searchQuery.toLowerCase();
-                filtered = filtered.filter(p => (p.name && p.name.toLowerCase().includes(q)) || (p.desc && p.desc.toLowerCase().includes(q)));
+                var q = searchQuery.toLowerCase();
+                filtered = filtered.filter(function(p) { return (p.name && p.name.toLowerCase().includes(q)) || (p.desc && p.desc.toLowerCase().includes(q)); });
             }
-            if (currentSort === 'name') filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-            else if (currentSort === 'price') filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
-            else if (currentSort === 'category') filtered.sort((a, b) => (a.category || '').localeCompare(b.category || ''));
+            if (currentSort === 'name') filtered.sort(function(a, b) { return (a.name || '').localeCompare(b.name || ''); });
+            else if (currentSort === 'price') filtered.sort(function(a, b) { return (a.price || 0) - (b.price || 0); });
+            else if (currentSort === 'category') filtered.sort(function(a, b) { return (a.category || '').localeCompare(b.category || ''); });
 
             if (filtered.length === 0) { list.innerHTML = '<div class="empty-state">Товаров не найдено</div>'; return; }
 
-            list.innerHTML = filtered.map(p => {
-                const tags = (p.tags || []).map(t => `<span style="background:rgba(245,240,234,0.3);padding:2px 8px;border-radius:4px;font-size:11px;color:#5a4a3a;">${t}</span>`).join(' ');
-                const specs = p.specs || {};
-                const specKeys = Object.keys(specs);
-                const specsDisplay = specKeys.length > 0 ? specKeys.map(k => `${k}: ${specs[k]}`).join(' · ') : '';
-                return `
-                <div class="admin-item">
-                    <div class="admin-item-info">
-                        <span>${p.name || 'Без названия'}</span>
-                        <span class="price">${(p.price || 0).toLocaleString('ru-RU')} ₽</span>
-                        <span class="category-badge">${p.category || 'без категории'}</span>
-                        <span style="color:${p.inStock !== false ? '#5a7a4a' : '#8a5a4a'};font-size:12px;">${p.inStock !== false ? '✓' : '✕'}</span>
-                        <span style="font-size:11px;color:#7b5f47;">📸 ${p.images ? p.images.length : 0}</span>
-                        ${specsDisplay ? `<span style="font-size:11px;color:#7b5f47;">${specsDisplay}</span>` : ''}
-                        <span style="font-size:12px;color:#7b5f47;">${tags}</span>
-                    </div>
-                    <div class="admin-item-actions">
-                        <button class="edit-btn" onclick="editProduct(${p.id})">✎</button>
-                        <button onclick="copyProduct(${p.id})">📋</button>
-                        <button onclick="deleteProduct(${p.id})">✕</button>
-                    </div>
-                </div>
-            `}).join('');
+            var html = '';
+            for (var i = 0; i < filtered.length; i++) {
+                var p = filtered[i];
+                var tags = p.tags || [];
+                var tagsStr = '';
+                for (var t = 0; t < tags.length; t++) {
+                    tagsStr += '<span style="background:rgba(245,240,234,0.3);padding:2px 8px;border-radius:4px;font-size:11px;color:#5a4a3a;">' + tags[t] + '</span> ';
+                }
+                var specs = p.specs || {};
+                var specKeys = Object.keys(specs);
+                var specsDisplay = '';
+                for (var s = 0; s < specKeys.length; s++) {
+                    specsDisplay += specKeys[s] + ': ' + specs[specKeys[s]];
+                    if (s < specKeys.length - 1) specsDisplay += ' · ';
+                }
+                html += '<div class="admin-item"><div class="admin-item-info"><span>' + (p.name || 'Без названия') + '</span><span class="price">' + (p.price || 0).toLocaleString('ru-RU') + ' ₽</span><span class="category-badge">' + (p.category || 'без категории') + '</span><span style="color:' + (p.inStock !== false ? '#5a7a4a' : '#8a5a4a') + ';font-size:12px;">' + (p.inStock !== false ? '✓' : '✕') + '</span><span style="font-size:11px;color:#7b5f47;">📸 ' + (p.images ? p.images.length : 0) + '</span>' + (specsDisplay ? '<span style="font-size:11px;color:#7b5f47;">' + specsDisplay + '</span>' : '') + '<span style="font-size:12px;color:#7b5f47;">' + tagsStr + '</span></div><div class="admin-item-actions"><button class="edit-btn" onclick="editProduct(' + p.id + ')">✎</button><button onclick="copyProduct(' + p.id + ')">📋</button><button onclick="deleteProduct(' + p.id + ')">✕</button></div></div>';
+            }
+            list.innerHTML = html;
         }
 
         // ===== ДОБАВЛЕНИЕ/РЕДАКТИРОВАНИЕ =====
         function addProduct() {
-            const editId = document.getElementById('editId').value;
-            const name = document.getElementById('productName').value.trim();
-            const price = parseFloat(document.getElementById('productPrice').value);
-            const category = document.getElementById('productCategory').value;
-            const desc = document.getElementById('productDesc').value.trim();
-            const inStock = document.getElementById('inStock').checked;
-            const tags = [];
+            var editId = document.getElementById('editId').value;
+            var name = document.getElementById('productName').value.trim();
+            var price = parseFloat(document.getElementById('productPrice').value);
+            var category = document.getElementById('productCategory').value;
+            var desc = document.getElementById('productDesc').value.trim();
+            var inStock = document.getElementById('inStock').checked;
+            var tags = [];
             if (document.getElementById('isHit').checked) tags.push('хит');
             if (document.getElementById('isNew').checked) tags.push('новинка');
             if (document.getElementById('isPremium').checked) tags.push('премиум');
@@ -527,13 +521,16 @@
             if (!name) { showToast('❌ Введите название!'); return; }
             if (!price || isNaN(price) || price <= 0) { showToast('❌ Введите цену!'); return; }
 
-            const specs = getSpecsFromRows();
-            const images = tempImages.length > 0 ? tempImages : ['https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400'];
+            var specs = getSpecsFromRows();
+            var images = tempImages.length > 0 ? tempImages.slice() : ['https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400'];
 
             if (editId) {
-                const index = products.findIndex(p => p.id === parseInt(editId));
+                var index = -1;
+                for (var i = 0; i < products.length; i++) {
+                    if (products[i].id === parseInt(editId)) { index = i; break; }
+                }
                 if (index !== -1) {
-                    products[index] = { ...products[index], name, price, category, desc: desc || 'Без описания', inStock, tags, images, specs };
+                    products[index] = { id: products[index].id, name: name, price: price, category: category, desc: desc || 'Без описания', inStock: inStock, tags: tags, images: images, specs: specs };
                     showToast('✅ Товар обновлён!');
                 } else { showToast('❌ Товар не найден!'); return; }
                 document.getElementById('editId').value = '';
@@ -541,7 +538,8 @@
                 document.getElementById('submitBtn').textContent = '➕ Добавить';
                 document.getElementById('cancelBtn').style.display = 'none';
             } else {
-                products.push({ id: Date.now(), name, price, category, desc: desc || 'Без описания', inStock, tags, images, specs });
+                var newProduct = { id: Date.now(), name: name, price: price, category: category, desc: desc || 'Без описания', inStock: inStock, tags: tags, images: images, specs: specs };
+                products.push(newProduct);
                 showToast('✅ Товар добавлен!');
             }
 
@@ -551,7 +549,10 @@
         }
 
         function editProduct(id) {
-            const p = products.find(item => item.id === id);
+            var p = null;
+            for (var i = 0; i < products.length; i++) {
+                if (products[i].id === id) { p = products[i]; break; }
+            }
             if (!p) return;
             document.getElementById('editId').value = p.id;
             document.getElementById('productName').value = p.name || '';
@@ -559,11 +560,11 @@
             document.getElementById('productCategory').value = p.category || 'iPhone';
             document.getElementById('productDesc').value = p.desc || '';
             document.getElementById('inStock').checked = p.inStock !== false;
-            document.getElementById('isHit').checked = (p.tags || []).includes('хит');
-            document.getElementById('isNew').checked = (p.tags || []).includes('новинка');
-            document.getElementById('isPremium').checked = (p.tags || []).includes('премиум');
+            document.getElementById('isHit').checked = (p.tags || []).indexOf('хит') !== -1;
+            document.getElementById('isNew').checked = (p.tags || []).indexOf('новинка') !== -1;
+            document.getElementById('isPremium').checked = (p.tags || []).indexOf('премиум') !== -1;
             setSpecsToRows(p.specs || {});
-            tempImages = p.images ? [...p.images] : [];
+            tempImages = p.images ? p.images.slice() : [];
             renderImagePreviews();
             document.getElementById('formTitle').textContent = '✎ Редактировать товар';
             document.getElementById('submitBtn').textContent = '💾 Сохранить';
@@ -579,9 +580,15 @@
         }
 
         function copyProduct(id) {
-            const p = products.find(item => item.id === id);
+            var p = null;
+            for (var i = 0; i < products.length; i++) {
+                if (products[i].id === id) { p = products[i]; break; }
+            }
             if (!p) return;
-            products.push({ ...p, id: Date.now(), name: p.name + ' (копия)' });
+            var copy = JSON.parse(JSON.stringify(p));
+            copy.id = Date.now();
+            copy.name = p.name + ' (копия)';
+            products.push(copy);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
             renderAdminList(); updateStats();
             showToast('📋 Товар скопирован!');
@@ -589,7 +596,7 @@
 
         function deleteProduct(id) {
             if (!confirm('Удалить товар?')) return;
-            products = products.filter(p => p.id !== id);
+            products = products.filter(function(p) { return p.id !== id; });
             localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
             renderAdminList(); updateStats();
             showToast('🗑️ Товар удалён');
@@ -614,26 +621,26 @@
         }
 
         function exportProducts() {
-            const blob = new Blob([JSON.stringify(products, null, 2)], { type: 'application/json' });
-            const a = document.createElement('a');
+            var blob = new Blob([JSON.stringify(products, null, 2)], { type: 'application/json' });
+            var a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = `apple_store_${new Date().toISOString().slice(0,10)}.json`;
+            a.download = 'apple_store_' + new Date().toISOString().slice(0,10) + '.json';
             a.click();
             showToast('📤 Экспорт выполнен!');
         }
 
         function importProducts(event) {
-            const file = event.target.files[0];
+            var file = event.target.files[0];
             if (!file) return;
-            const reader = new FileReader();
+            var reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const imported = JSON.parse(e.target.result);
+                    var imported = JSON.parse(e.target.result);
                     if (Array.isArray(imported)) {
                         products = imported;
                         localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
                         renderAdminList(); updateStats();
-                        showToast(`📥 Импортировано ${products.length} товаров!`);
+                        showToast('📥 Импортировано ' + products.length + ' товаров!');
                     } else { showToast('❌ Неверный формат'); }
                 } catch (err) { showToast('❌ Ошибка чтения'); }
             };
@@ -656,20 +663,20 @@
         }
 
         function showToast(message) {
-            const existing = document.querySelector('.toast');
+            var existing = document.querySelector('.toast');
             if (existing) existing.remove();
-            const toast = document.createElement('div');
+            var toast = document.createElement('div');
             toast.className = 'toast';
             toast.textContent = message;
             document.body.appendChild(toast);
-            setTimeout(() => {
+            setTimeout(function() {
                 toast.style.opacity = '0';
                 toast.style.transform = 'translateX(-50%) translateY(-20px)';
-                setTimeout(() => toast.remove(), 400);
+                setTimeout(function() { toast.remove(); }, 400);
             }, 2500);
         }
 
-        window.addEventListener('storage', (e) => {
+        window.addEventListener('storage', function(e) {
             if (e.key === CATEGORY_KEY) { try { categories = JSON.parse(e.newValue); renderCategoriesAdmin(); renderCategorySelect(); } catch (e) {} }
             if (e.key === STORAGE_KEY) { try { products = JSON.parse(e.newValue); renderAdminList(); updateStats(); } catch (e) {} }
         });
