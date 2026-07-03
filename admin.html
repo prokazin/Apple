@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Админ-панель Apple Store</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-panel {
+            max-width: 800px;
+            margin: 30px auto;
+            background: #fcf8f2;
+            backdrop-filter: blur(30px);
+            padding: 30px;
+            border-radius: 32px;
+            border: 0.5px solid rgba(180, 140, 110, 0.1);
+            box-shadow: 0 12px 30px rgba(150, 100, 60, 0.12);
+        }
+        .admin-panel h2 {
+            margin-bottom: 24px;
+            font-weight: 600;
+            color: #3e2c1b;
+        }
+        .admin-input {
+            width: 100%;
+            padding: 14px 16px;
+            margin: 6px 0 14px;
+            border-radius: 16px;
+            border: 0.5px solid rgba(180, 140, 110, 0.15);
+            background: #f5ede4;
+            color: #3e2c1b;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+        .admin-input:focus {
+            outline: none;
+            border-color: #b48b6e;
+            background: #fcf8f2;
+        }
+        .admin-input::placeholder {
+            color: #7b5f47;
+        }
+        .admin-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .admin-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 30px;
+            border: none;
+            background: #b48b6e;
+            color: #fcf8f2;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 6px;
+            box-shadow: 0 4px 12px rgba(160, 110, 70, 0.2);
+        }
+        .admin-btn:hover {
+            opacity: 0.85;
+            transform: scale(1.01);
+        }
+        .admin-btn.danger {
+            background: #c9a08a;
+        }
+        .admin-btn.secondary {
+            background: #ede3d7;
+            color: #3e2c1b;
+            box-shadow: none;
+        }
+        .admin-btn.secondary:hover {
+            background: #e3d6c8;
+        }
+        .admin-btn.small {
+            width: auto;
+            padding: 8px 16px;
+            font-size: 14px;
+            margin-top: 0;
+        }
+        .admin-btn.green {
+            background: #b7a084;
+        }
+        .admin-btn.green:hover {
+            opacity: 0.85;
+        }
+        .admin-toolbar {
+            display: flex;
+            gap: 10px;
+            margin: 16px 0;
+            flex-wrap: wrap;
+        }
+        .admin-toolbar .admin-btn {
+            width: auto;
+            padding: 10px 20px;
+            font-size: 14px;
+            margin-top: 0;
+        }
+        .admin-list {
+            margin-top: 24px;
+            border-top: 0.5px solid rgba(180, 140, 110, 0.1);
+            padding-top: 16px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .admin-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 4px;
+            border-bottom: 0.5px solid rgba(180, 140, 110, 0.05);
+            transition: 0.3s;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .admin-item:hover {
+            background: #f5ede4;
+            border-radius: 8px;
+            padding-left: 8px;
+        }
+        .admin-item-info {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .admin-item-info span {
+            color: #3e2c1b;
+        }
+        .admin-item-info .price {
+            color: #8b5e3c;
+            font-weight: 600;
+        }
+        .admin-item-info .category-badge {
+            background: #ede3d7;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            color: #5a3f2b;
+        }
+        .admin-item-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .admin-item-actions button {
+            background: rgba(180, 140, 110, 0.15);
+            border: none;
+            color: #6f5540;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+        .admin-item-actions button:hover {
+            background: rgba(180, 140, 110, 0.25);
+        }
+        .admin-item-actions .edit-btn {
+            background: rgba(180, 140, 110, 0.2);
+            color: #5a3f2b;
+        }
+        .admin-item-actions .edit-btn:hover {
+            background: rgba(180, 140, 110, 0.3);
+        }
+        .admin-item-actions .copy-btn {
+            background: rgba(180, 140, 110, 0.15);
+            color: #5a3f2b;
+        }
+        .admin-item-actions .copy-btn:hover {
+            background: rgba(180, 140, 110, 0.25);
+        }
+        .admin-search {
+            margin-bottom: 16px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .admin-search input {
+            flex: 1;
+            min-width: 200px;
+        }
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+            padding: 16px;
+            background: #f5ede4;
+            border-radius: 16px;
+            border: 0.5px solid rgba(180, 140, 110, 0.05);
+        }
+        .admin-stats div {
+            text-align: center;
+        }
+        .admin-stats .number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #3e2c1b;
+        }
+        .admin-stats .label {
+            font-size: 12px;
+            color: #7b5f47;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .login-form {
+            display: none;
+        }
+        .login-form.active {
+            display: block;
+        }
+        .admin-content {
+            display: none;
+        }
+        .admin-content.active {
+            display: block;
+        }
+        .checkbox-group {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin: 8px 0 14px;
+        }
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #5a3f2b;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #b48b6e;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #7b5f47;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        .back-link:hover {
+            color: #3e2c1b;
+        }
+        .password-input {
+            margin-bottom: 16px;
+        }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fcf8f2;
+            backdrop-filter: blur(20px);
+            padding: 14px 28px;
+            border-radius: 30px;
+            color: #3e2c1b;
+            font-size: 15px;
+            font-weight: 500;
+            z-index: 9999;
+            animation: toastIn 0.4s ease;
+            border: 0.5px solid rgba(180, 140, 110, 0.1);
+            box-shadow: 0 8px 24px rgba(150, 100, 60, 0.15);
+        }
+        @keyframes toastIn {
+            0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        
+        .image-upload-area {
+            border: 2px dashed rgba(180, 140, 110, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            margin: 6px 0 14px;
+            transition: 0.3s;
+            cursor: pointer;
+            background: #f5ede4;
+        }
+        .image-upload-area:hover {
+            border-color: #b48b6e;
+            background: #fcf8f2;
+        }
+        .image-upload-area.dragover {
+            border-color: #b48b6e;
+            background: #ede3d7;
+        }
+        .image-upload-area .icon {
+            font-size: 32px;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .image-upload-area .text {
+            color: #7b5f47;
+            font-size: 14px;
+        }
+        .image-upload-area input[type="file"] {
+            display: none;
+        }
+        .image-preview-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+        .image-preview {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 0.5px solid rgba(180, 140, 110, 0.1);
+        }
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .image-preview .remove-image {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 22px;
+            height: 22px;
+            border-radius: 30px;
+            background: #c9a08a;
+            color: #fff;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .spec-label {
+            font-size: 12px;
+            color: #7b5f47;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .specs-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 6px 0 14px;
+        }
+        .spec-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 30px;
+            gap: 10px;
+            align-items: center;
+        }
+        .spec-row input {
+            margin: 0;
+        }
+        .spec-row .remove-spec {
+            background: rgba(180, 140, 110, 0.15);
+            border: none;
+            color: #6f5540;
+            width: 30px;
+            height: 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+        .spec-row .remove-spec:hover {
+            background: rgba(180, 140, 110, 0.25);
+        }
+        .add-spec-btn {
+            background: rgba(180, 140, 110, 0.15);
+            border: none;
+            color: #5a3f2b;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            width: fit-content;
+            font-weight: 500;
+        }
+        .add-spec-btn:hover {
+            background: rgba(180, 140, 110, 0.25);
+        }
+
+        .categories-admin {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0 16px;
+            padding: 12px;
+            background: #f5ede4;
+            border-radius: 16px;
+            border: 0.5px solid rgba(180, 140, 110, 0.05);
+        }
+        .category-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #fcf8f2;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #3e2c1b;
+            border: 0.5px solid rgba(180, 140, 110, 0.1);
+        }
+        .category-tag .remove-cat {
+            background: none;
+            border: none;
+            color: #c9a08a;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0 4px;
+        }
+        .category-tag .remove-cat:hover {
+            opacity: 0.7;
+        }
+        .add-category-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 8px;
+        }
+        .add-category-row input {
+            flex: 1;
+            margin: 0;
+        }
+        .add-category-row .admin-btn {
+            width: auto;
+            margin: 0;
+            padding: 10px 20px;
+        }
+
+        @media (max-width: 640px) {
+            .admin-panel {
+                padding: 20px;
+                margin: 16px 8px;
+                border-radius: 24px;
+            }
+            .admin-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            .spec-row {
+                grid-template-columns: 1fr 1fr 30px;
+            }
+            .admin-toolbar .admin-btn {
+                width: 100%;
+                text-align: center;
+            }
+            .admin-item {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 10px 0;
+            }
+            .admin-item-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            .admin-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            .admin-search {
+                flex-direction: column;
+            }
+            .admin-search input {
+                width: 100%;
+            }
+            .image-preview {
+                width: 60px;
+                height: 60px;
+            }
+            .add-category-row {
+                flex-direction: column;
+            }
+            .add-category-row .admin-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="admin-panel">
+            <!-- Форма входа -->
+            <div id="loginForm" class="login-form active">
+                <h2>🔐 Вход в админ-панель</h2>
+                <input type="password" id="adminPassword" placeholder="Введите пароль" class="admin-input password-input">
+                <button onclick="checkPassword()" class="admin-btn">Войти</button>
+            </div>
+
+            <!-- Панель управления -->
+            <div id="adminContent" class="admin-content">
+                <h2>⚙️ Управление товарами</h2>
+                
+                <div class="admin-stats" id="stats">
+                    <div>
+                        <div class="number" id="totalCount">0</div>
+                        <div class="label">Всего</div>
+                    </div>
+                    <div>
+                        <div class="number" id="iPhoneCount">0</div>
+                        <div class="label">iPhone</div>
+                    </div>
+                    <div>
+                        <div class="number" id="MacCount">0</div>
+                        <div class="label">Mac</div>
+                    </div>
+                    <div>
+                        <div class="number" id="WatchCount">0</div>
+                        <div class="label">Watch</div>
+                    </div>
+                </div>
+
+                <!-- Управление категориями -->
+                <div style="background:#f5ede4;padding:16px;border-radius:16px;margin-bottom:16px;border:0.5px solid rgba(180,140,110,0.05);">
+                    <h3 style="font-size:16px;font-weight:500;margin-bottom:10px;color:#3e2c1b;">📂 Управление категориями</h3>
+                    <div class="categories-admin" id="categoriesAdminList"></div>
+                    <div class="add-category-row">
+                        <input type="text" id="newCategoryInput" placeholder="Название новой категории" class="admin-input">
+                        <button onclick="addCategory()" class="admin-btn green small">➕ Добавить</button>
+                    </div>
+                </div>
+
+                <div class="admin-search">
+                    <input type="text" id="searchInput" placeholder="🔍 Поиск по названию..." class="admin-input" oninput="searchProducts()">
+                </div>
+
+                <!-- Форма добавления/редактирования товара -->
+                <div style="background:#f5ede4;padding:16px;border-radius:16px;margin-bottom:16px;border:0.5px solid rgba(180,140,110,0.05);">
+                    <h3 id="formTitle" style="font-size:16px;font-weight:500;margin-bottom:12px;color:#3e2c1b;">➕ Добавить товар</h3>
+                    <input type="hidden" id="editId">
+                    
+                    <div class="admin-row">
+                        <input type="text" id="productName" placeholder="Название" class="admin-input">
+                        <input type="number" id="productPrice" placeholder="Цена в рублях" class="admin-input">
+                    </div>
+                    
+                    <select id="productCategory" class="admin-input">
+                        <!-- Категории будут загружены из localStorage -->
+                    </select>
+                    
+                    <!-- Динамические характеристики -->
+                    <div style="background:#fcf8f2;border-radius:16px;padding:14px;margin:6px 0 14px;border:0.5px solid rgba(180,140,110,0.05);">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                            <div style="font-size:13px;color:#7b5f47;text-transform:uppercase;letter-spacing:0.5px;">📋 Характеристики</div>
+                            <button onclick="addSpecRow()" class="add-spec-btn">➕ Добавить характеристику</button>
+                        </div>
+                        <div class="specs-container" id="specsContainer">
+                            <!-- Строки характеристик добавляются сюда -->
+                        </div>
+                        <div style="font-size:12px;color:#7b5f47;margin-top:6px;">Формат: <strong>Название</strong> и <strong>Значение</strong></div>
+                    </div>
+                    
+                    <div class="image-upload-area" id="imageUploadArea" onclick="document.getElementById('imageInput').click()">
+                        <span class="icon">📸</span>
+                        <div class="text">Нажмите или перетащите фото для загрузки</div>
+                        <input type="file" id="imageInput" accept="image/*" multiple onchange="handleImageUpload(event)">
+                    </div>
+                    <div class="image-preview-container" id="imagePreviewContainer"></div>
+                    
+                    <textarea id="productDesc" placeholder="Описание" rows="2" class="admin-input"></textarea>
+                    
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" id="inStock" checked> В наличии</label>
+                        <label><input type="checkbox" id="isHit"> Хит</label>
+                        <label><input type="checkbox" id="isNew"> Новинка</label>
+                        <label><input type="checkbox" id="isPremium"> Премиум</label>
+                    </div>
+                    
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                        <button onclick="addProduct()" id="submitBtn" class="admin-btn" style="flex:1;">➕ Добавить</button>
+                        <button onclick="cancelEdit()" id="cancelBtn" class="admin-btn secondary" style="flex:1;display:none;">Отмена</button>
+                    </div>
+                </div>
+
+                <div class="admin-toolbar">
+                    <button onclick="sortProducts('name')" class="admin-btn secondary">По имени</button>
+                    <button onclick="sortProducts('price')" class="admin-btn secondary">По цене</button>
+                    <button onclick="sortProducts('category')" class="admin-btn secondary">По категории</button>
+                    <button onclick="exportProducts()" class="admin-btn secondary">📤 Экспорт</button>
+                    <button onclick="document.getElementById('importFile').click()" class="admin-btn secondary">📥 Импорт</button>
+                    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importProducts(event)">
+                    <button onclick="if(confirm('Удалить все товары?')){clearAllProducts();}" class="admin-btn danger">🗑️ Очистить всё</button>
+                </div>
+
+                <div class="admin-list" id="adminProductList"></div>
+                
+                <a href="index.html" class="back-link">← Вернуться в магазин</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ADMIN_PASSWORD = 'apple2026';
+        let products = [];
+        let categories = [];
+        let searchQuery = '';
+        let currentSort = '';
+        let tempImages = [];
+
+        // ===== УПРАВЛЕНИЕ КАТЕГОРИЯМИ =====
+        function loadCategories() {
+            const stored = localStorage.getItem('shopCategories');
+            if (stored) {
+                try {
+                    categories = JSON.parse(stored);
+                } catch (e) {
+                    categories = ['iPhone', 'Mac', 'Watch', 'Аксессуары'];
+                }
+            } else {
+                categories = ['iPhone', 'Mac', 'Watch', 'Аксессуары'];
+                localStorage.setItem('shopCategories', JSON.stringify(categories));
+            }
+            renderCategoriesAdmin();
+            renderCategorySelect();
+            notifySite();
+        }
+
+        function renderCategoriesAdmin() {
+            const container = document.getElementById('categoriesAdminList');
+            if (!container) return;
+            
+            if (categories.length === 0) {
+                container.innerHTML = '<span style="color:#7b5f47;font-size:14px;">Нет категорий</span>';
+                return;
+            }
+            
+            container.innerHTML = categories.map(cat => `
+                <span class="category-tag">
+                    ${cat.charAt(0).toUpperCase() + cat.slice(1)}
+                    <button class="remove-cat" onclick="deleteCategory('${cat}')" title="Удалить категорию">✕</button>
+                </span>
+            `).join('');
+        }
+
+        function renderCategorySelect() {
+            const select = document.getElementById('productCategory');
+            if (!select) return;
+            
+            const currentValue = select.value || (categories.length > 0 ? categories[0] : '');
+            select.innerHTML = categories.map(cat => `
+                <option value="${cat}">${cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+            `).join('');
+            
+            if (categories.includes(currentValue)) {
+                select.value = currentValue;
+            } else if (categories.length > 0) {
+                select.value = categories[0];
+            }
+        }
+
+        function addCategory() {
+            const input = document.getElementById('newCategoryInput');
+            const name = input.value.trim().toLowerCase();
+            
+            if (!name) {
+                showToast('❌ Введите название категории!');
+                return;
+            }
+            
+            if (categories.includes(name)) {
+                showToast('❌ Такая категория уже существует!');
+                return;
+            }
+            
+            categories.push(name);
+            localStorage.setItem('shopCategories', JSON.stringify(categories));
+            
+            input.value = '';
+            renderCategoriesAdmin();
+            renderCategorySelect();
+            notifySite();
+            
+            showToast('✅ Категория добавлена!');
+        }
+
+        function deleteCategory(cat) {
+            const hasProducts = products.some(p => p.category === cat);
+            if (hasProducts) {
+                showToast('❌ Нельзя удалить категорию с товарами!');
+                return;
+            }
+            
+            if (!confirm(`Удалить категорию "${cat}"?`)) return;
+            
+            categories = categories.filter(c => c !== cat);
+            localStorage.setItem('shopCategories', JSON.stringify(categories));
+            
+            renderCategoriesAdmin();
+            renderCategorySelect();
+            notifySite();
+            
+            showToast('🗑️ Категория удалена');
+        }
+
+        function notifySite() {
+            localStorage.setItem('shopCategories', JSON.stringify(categories));
+            const event = new StorageEvent('storage', {
+                key: 'shopCategories',
+                newValue: JSON.stringify(categories)
+            });
+            window.dispatchEvent(event);
+        }
+
+        // ===== ХАРАКТЕРИСТИКИ =====
+        function addSpecRow(key = '', value = '') {
+            const container = document.getElementById('specsContainer');
+            if (!container) return;
+            
+            const row = document.createElement('div');
+            row.className = 'spec-row';
+            row.innerHTML = `
+                <input type="text" class="admin-input spec-key" placeholder="Название (например: Экран)" value="${key}" style="margin:0;">
+                <input type="text" class="admin-input spec-value" placeholder="Значение (например: 6.3")" value="${value}" style="margin:0;">
+                <button class="remove-spec" onclick="removeSpecRow(this)" title="Удалить характеристику">✕</button>
+            `;
+            container.appendChild(row);
+        }
+
+        function removeSpecRow(btn) {
+            const row = btn.closest('.spec-row');
+            if (row) {
+                const container = document.getElementById('specsContainer');
+                if (container.children.length <= 1) {
+                    showToast('❌ Должна быть хотя бы одна характеристика');
+                    return;
+                }
+                row.remove();
+            }
+        }
+
+        function getSpecsFromRows() {
+            const rows = document.querySelectorAll('.spec-row');
+            const specs = {};
+            for (const row of rows) {
+                const keyInput = row.querySelector('.spec-key');
+                const valueInput = row.querySelector('.spec-value');
+                if (keyInput && valueInput) {
+                    const key = keyInput.value.trim();
+                    const value = valueInput.value.trim();
+                    if (key && value) {
+                        specs[key] = value;
+                    }
+                }
+            }
+            return specs;
+        }
+
+        function setSpecsToRows(specs) {
+            const container = document.getElementById('specsContainer');
+            container.innerHTML = '';
+            
+            const keys = Object.keys(specs);
+            if (keys.length === 0) {
+                addSpecRow('', '');
+                return;
+            }
+            
+            for (const key of keys) {
+                addSpecRow(key, specs[key]);
+            }
+        }
+
+        // ===== ВХОД И ЗАГРУЗКА =====
+        function checkPassword() {
+            const pass = document.getElementById('adminPassword').value;
+            if (pass === ADMIN_PASSWORD) {
+                document.getElementById('loginForm').classList.remove('active');
+                document.getElementById('adminContent').classList.add('active');
+                loadAdminProducts();
+                loadCategories();
+            } else {
+                showToast('❌ Неверный пароль!');
+                document.getElementById('adminPassword').value = '';
+            }
+        }
+
+        function loadAdminProducts() {
+            const stored = localStorage.getItem('shopProducts');
+            if (stored) {
+                try {
+                    products = JSON.parse(stored);
+                } catch (e) {
+                    products = [];
+                }
+            } else {
+                products = [];
+            }
+            renderAdminList();
+            updateStats();
+        }
+
+        // ===== ЗАГРУЗКА ИЗОБРАЖЕНИЙ =====
+        function handleImageUpload(event) {
+            const files = event.target.files;
+            for (const file of files) {
+                if (file.size > 5 * 1024 * 1024) {
+                    showToast('❌ Файл слишком большой (макс. 5MB)');
+                    continue;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempImages.push(e.target.result);
+                    renderImagePreviews();
+                };
+                reader.readAsDataURL(file);
+            }
+            event.target.value = '';
+        }
+
+        function renderImagePreviews() {
+            const container = document.getElementById('imagePreviewContainer');
+            if (!container) return;
+            container.innerHTML = tempImages.map((img, index) => `
+                <div class="image-preview">
+                    <img src="${img}" alt="Фото">
+                    <button class="remove-image" onclick="removeImage(${index})">✕</button>
+                </div>
+            `).join('');
+        }
+
+        function removeImage(index) {
+            tempImages.splice(index, 1);
+            renderImagePreviews();
+        }
+
+        const uploadArea = document.getElementById('imageUploadArea');
+        if (uploadArea) {
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                for (const file of files) {
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(ev) {
+                            tempImages.push(ev.target.result);
+                            renderImagePreviews();
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }
+            });
+        }
+
+        // ===== ОТОБРАЖЕНИЕ СПИСКА =====
+        function renderAdminList() {
+            const list = document.getElementById('adminProductList');
+            if (!list) return;
+            
+            let filtered = [...products];
+            
+            if (searchQuery) {
+                const q = searchQuery.toLowerCase();
+                filtered = filtered.filter(p => 
+                    (p.name && p.name.toLowerCase().includes(q)) || 
+                    (p.desc && p.desc.toLowerCase().includes(q))
+                );
+            }
+            
+            if (currentSort === 'name') {
+                filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+            } else if (currentSort === 'price') {
+                filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
+            } else if (currentSort === 'category') {
+                filtered.sort((a, b) => (a.category || '').localeCompare(b.category || ''));
+            }
+            
+            if (filtered.length === 0) {
+                list.innerHTML = '<p style="color:#7b5f47;text-align:center;padding:20px 0;">Товаров не найдено</p>';
+                return;
+            }
+            
+            list.innerHTML = filtered.map(p => {
+                const tags = p.tags || [];
+                const tagsStr = tags.map(t => `<span style="background:#ede3d7;padding:2px 8px;border-radius:8px;font-size:11px;color:#5a3f2b;">${t}</span>`).join(' ');
+                const imagesCount = p.images ? p.images.length : 0;
+                
+                const specs = p.specs || {};
+                const specKeys = Object.keys(specs);
+                const specsDisplay = specKeys.length > 0 ? specKeys.map(k => `${k}: ${specs[k]}`).join(' · ') : '';
+                
+                return `
+                <div class="admin-item">
+                    <div class="admin-item-info">
+                        <span style="font-weight:500;">${p.name || 'Без названия'}</span>
+                        <span class="price">${(p.price || 0).toLocaleString('ru-RU')} ₽</span>
+                        <span class="category-badge">${p.category || 'без категории'}</span>
+                        <span style="color:${p.inStock !== false ? '#2f402a' : '#6f3e2e'};font-size:12px;">${p.inStock !== false ? '✓' : '✕'}</span>
+                        <span style="font-size:11px;color:#7b5f47;">📸 ${imagesCount}</span>
+                        ${specsDisplay ? `<span style="font-size:11px;color:#7b5f47;">${specsDisplay}</span>` : ''}
+                        <span style="font-size:12px;color:#7b5f47;">${tagsStr}</span>
+                    </div>
+                    <div class="admin-item-actions">
+                        <button class="edit-btn" onclick="editProduct(${p.id})">✎</button>
+                        <button class="copy-btn" onclick="copyProduct(${p.id})">📋</button>
+                        <button onclick="deleteProduct(${p.id})">✕</button>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('totalCount').textContent = products.length;
+            document.getElementById('iPhoneCount').textContent = products.filter(p => p.category === 'iPhone').length;
+            document.getElementById('MacCount').textContent = products.filter(p => p.category === 'Mac').length;
+            document.getElementById('WatchCount').textContent = products.filter(p => p.category === 'Watch').length;
+        }
+
+        // ===== ДОБАВЛЕНИЕ/РЕДАКТИРОВАНИЕ ТОВАРА =====
+        function addProduct() {
+            const editId = document.getElementById('editId').value;
+            const name = document.getElementById('productName').value.trim();
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const category = document.getElementById('productCategory').value;
+            const desc = document.getElementById('productDesc').value.trim();
+            const inStock = document.getElementById('inStock').checked;
+            
+            const tags = [];
+            if (document.getElementById('isHit').checked) tags.push('хит');
+            if (document.getElementById('isNew').checked) tags.push('новинка');
+            if (document.getElementById('isPremium').checked) tags.push('премиум');
+
+            if (!name) {
+                showToast('❌ Введите название товара!');
+                return;
+            }
+            if (!price || isNaN(price) || price <= 0) {
+                showToast('❌ Введите корректную цену!');
+                return;
+            }
+
+            const specs = getSpecsFromRows();
+            const images = tempImages.length > 0 ? tempImages : ['https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=800'];
+
+            if (editId) {
+                const index = products.findIndex(p => p.id === parseInt(editId));
+                if (index !== -1) {
+                    products[index] = {
+                        ...products[index],
+                        name,
+                        price,
+                        category,
+                        desc: desc || 'Без описания',
+                        inStock,
+                        tags,
+                        images,
+                        specs: Object.keys(specs).length > 0 ? specs : {}
+                    };
+                    showToast('✅ Товар обновлён!');
+                } else {
+                    showToast('❌ Товар не найден!');
+                    return;
+                }
+                document.getElementById('editId').value = '';
+                document.getElementById('formTitle').textContent = '➕ Добавить товар';
+                document.getElementById('submitBtn').textContent = '➕ Добавить';
+                document.getElementById('cancelBtn').style.display = 'none';
+            } else {
+                const newProduct = {
+                    id: Date.now(),
+                    name: name,
+                    price: price,
+                    category: category,
+                    desc: desc || 'Без описания',
+                    inStock: inStock,
+                    tags: tags,
+                    images: images,
+                    specs: Object.keys(specs).length > 0 ? specs : {},
+                    rating: 0
+                };
+                products.push(newProduct);
+                showToast('✅ Товар добавлен!');
+            }
+            
+            localStorage.setItem('shopProducts', JSON.stringify(products));
+            renderAdminList();
+            updateStats();
+            clearForm();
+        }
+
+        function editProduct(id) {
+            const p = products.find(item => item.id === id);
+            if (!p) return;
+            
+            document.getElementById('editId').value = p.id;
+            document.getElementById('productName').value = p.name || '';
+            document.getElementById('productPrice').value = p.price || '';
+            document.getElementById('productCategory').value = p.category || 'iPhone';
+            document.getElementById('productDesc').value = p.desc || '';
+            document.getElementById('inStock').checked = p.inStock !== false;
+            document.getElementById('isHit').checked = (p.tags || []).includes('хит');
+            document.getElementById('isNew').checked = (p.tags || []).includes('новинка');
+            document.getElementById('isPremium').checked = (p.tags || []).includes('премиум');
+            
+            setSpecsToRows(p.specs || {});
+            
+            tempImages = p.images ? [...p.images] : [];
+            renderImagePreviews();
+            
+            document.getElementById('formTitle').textContent = '✎ Редактировать товар';
+            document.getElementById('submitBtn').textContent = '💾 Сохранить';
+            document.getElementById('cancelBtn').style.display = 'block';
+            
+            document.getElementById('submitBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function cancelEdit() {
+            document.getElementById('editId').value = '';
+            document.getElementById('formTitle').textContent = '➕ Добавить товар';
+            document.getElementById('submitBtn').textContent = '➕ Добавить';
+            document.getElementById('cancelBtn').style.display = 'none';
+            clearForm();
+        }
+
+        function copyProduct(id) {
+            const p = products.find(item => item.id === id);
+            if (!p) return;
+            
+            const copy = {
+                ...p,
+                id: Date.now(),
+                name: p.name + ' (копия)',
+                tags: [...(p.tags || [])],
+                images: [...(p.images || [])],
+                specs: p.specs ? { ...p.specs } : {}
+            };
+            products.push(copy);
+            localStorage.setItem('shopProducts', JSON.stringify(products));
+            renderAdminList();
+            updateStats();
+            showToast('📋 Товар скопирован!');
+        }
+
+        function deleteProduct(id) {
+            if (!confirm('Удалить товар?')) return;
+            products = products.filter(p => p.id !== id);
+            localStorage.setItem('shopProducts', JSON.stringify(products));
+            renderAdminList();
+            updateStats();
+            showToast('🗑️ Товар удалён');
+        }
+
+        function clearAllProducts() {
+            if (!confirm('Удалить все товары?')) return;
+            products = [];
+            localStorage.setItem('shopProducts', JSON.stringify(products));
+            renderAdminList();
+            updateStats();
+            showToast('🗑️ Все товары удалены');
+        }
+
+        function searchProducts() {
+            searchQuery = document.getElementById('searchInput').value;
+            renderAdminList();
+        }
+
+        function sortProducts(by) {
+            currentSort = currentSort === by ? '' : by;
+            renderAdminList();
+        }
+
+        function exportProducts() {
+            const data = JSON.stringify(products, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `apple_store_products_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('📤 Экспорт выполнен!');
+        }
+
+        function importProducts(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        products = imported;
+                        localStorage.setItem('shopProducts', JSON.stringify(products));
+                        renderAdminList();
+                        updateStats();
+                        showToast(`📥 Импортировано ${products.length} товаров!`);
+                    } else {
+                        showToast('❌ Неверный формат файла');
+                    }
+                } catch (err) {
+                    showToast('❌ Ошибка чтения файла');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function clearForm() {
+            document.getElementById('productName').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productDesc').value = '';
+            document.getElementById('inStock').checked = true;
+            document.getElementById('isHit').checked = false;
+            document.getElementById('isNew').checked = false;
+            document.getElementById('isPremium').checked = false;
+            
+            const container = document.getElementById('specsContainer');
+            container.innerHTML = '';
+            addSpecRow('', '');
+            
+            tempImages = [];
+            renderImagePreviews();
+        }
+
+        function showToast(message) {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(-50%) translateY(-20px)';
+                setTimeout(() => toast.remove(), 400);
+            }, 2500);
+        }
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'shopCategories') {
+                try {
+                    categories = JSON.parse(e.newValue);
+                    renderCategoriesAdmin();
+                    renderCategorySelect();
+                } catch (e) {}
+            }
+            if (e.key === 'shopProducts') {
+                try {
+                    products = JSON.parse(e.newValue);
+                    renderAdminList();
+                    updateStats();
+                } catch (e) {}
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('loginForm').classList.add('active');
+            addSpecRow('', '');
+        });
+    </script>
+</body>
+</html>
