@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Админ-панель · Эстетика Apple</title>
+    <title>Админ-панель · Атмосфера</title>
     <link rel="stylesheet" href="style.css">
     <style>
         .admin-panel {
@@ -19,17 +19,18 @@
         }
         .admin-panel h2 {
             margin-bottom: 24px;
-            font-weight: 400;
+            font-weight: 300;
             color: #2d241a;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
+            font-size: 22px;
         }
         .admin-input {
             width: 100%;
             padding: 14px 16px;
             margin: 6px 0 14px;
             border-radius: 16px;
-            border: 1px solid rgba(180, 140, 110, 0.1);
-            background: rgba(245, 240, 234, 0.4);
+            border: 1px solid rgba(180, 150, 120, 0.08);
+            background: rgba(245, 240, 234, 0.3);
             color: #2d241a;
             font-size: 15px;
             transition: 0.3s;
@@ -38,7 +39,7 @@
         .admin-input:focus {
             outline: none;
             border-color: #b48b6e;
-            background: rgba(255, 252, 248, 0.7);
+            background: rgba(255, 252, 248, 0.5);
         }
         .admin-input::placeholder {
             color: #7b5f47;
@@ -52,12 +53,12 @@
         .admin-btn {
             width: 100%;
             padding: 14px;
-            border-radius: 30px;
+            border-radius: 40px;
             border: none;
             background: #b48b6e;
             color: #fff;
             font-size: 15px;
-            font-weight: 400;
+            font-weight: 300;
             cursor: pointer;
             transition: 0.3s;
             margin-top: 6px;
@@ -67,25 +68,14 @@
             opacity: 0.85;
             transform: scale(1.01);
         }
-        .admin-btn.danger {
-            background: #c9a08a;
-        }
+        .admin-btn.danger { background: #c9a08a; }
         .admin-btn.secondary {
-            background: rgba(245, 240, 234, 0.6);
+            background: rgba(245, 240, 234, 0.5);
             color: #2d241a;
         }
-        .admin-btn.secondary:hover {
-            background: rgba(245, 240, 234, 0.9);
-        }
-        .admin-btn.small {
-            width: auto;
-            padding: 8px 16px;
-            font-size: 13px;
-            margin-top: 0;
-        }
-        .admin-btn.green {
-            background: #b7a084;
-        }
+        .admin-btn.secondary:hover { background: rgba(245, 240, 234, 0.8); }
+        .admin-btn.small { width: auto; padding: 8px 16px; font-size: 13px; margin-top: 0; }
+        .admin-btn.green { background: #b7a084; }
         .admin-toolbar {
             display: flex;
             gap: 10px;
@@ -100,7 +90,7 @@
         }
         .admin-list {
             margin-top: 24px;
-            border-top: 1px solid rgba(180, 140, 110, 0.08);
+            border-top: 1px solid rgba(180, 150, 120, 0.06);
             padding-top: 16px;
             max-height: 500px;
             overflow-y: auto;
@@ -110,13 +100,13 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 4px;
-            border-bottom: 1px solid rgba(180, 140, 110, 0.04);
+            border-bottom: 1px solid rgba(180, 150, 120, 0.04);
             transition: 0.3s;
             flex-wrap: wrap;
             gap: 8px;
         }
         .admin-item:hover {
-            background: rgba(245, 240, 234, 0.3);
+            background: rgba(245, 240, 234, 0.2);
             border-radius: 8px;
             padding-left: 8px;
         }
@@ -126,15 +116,10 @@
             align-items: center;
             flex-wrap: wrap;
         }
-        .admin-item-info span {
-            color: #2d241a;
-        }
-        .admin-item-info .price {
-            color: #b48b6e;
-            font-weight: 500;
-        }
+        .admin-item-info span { color: #2d241a; }
+        .admin-item-info .price { color: #b48b6e; font-weight: 400; }
         .admin-item-info .category-badge {
-            background: rgba(245, 240, 234, 0.4);
+            background: rgba(245, 240, 234, 0.3);
             padding: 2px 10px;
             border-radius: 12px;
             font-size: 11px;
@@ -146,7 +131,7 @@
             flex-wrap: wrap;
         }
         .admin-item-actions button {
-            background: rgba(180, 140, 110, 0.1);
+            background: rgba(180, 150, 120, 0.08);
             border: none;
             color: #5a4a3a;
             padding: 6px 14px;
@@ -154,20 +139,16 @@
             font-size: 13px;
             cursor: pointer;
             transition: 0.3s;
-            font-weight: 400;
+            font-weight: 300;
         }
-        .admin-item-actions button:hover {
-            background: rgba(180, 140, 110, 0.2);
-        }
+        .admin-item-actions button:hover { background: rgba(180, 150, 120, 0.16); }
         .admin-item-actions .edit-btn {
-            background: rgba(180, 140, 110, 0.15);
+            background: rgba(180, 150, 120, 0.12);
             color: #5a4a3a;
         }
-        .admin-item-actions .edit-btn:hover {
-            background: rgba(180, 140, 110, 0.25);
-        }
+        .admin-item-actions .edit-btn:hover { background: rgba(180, 150, 120, 0.2); }
         .admin-item-actions .copy-btn {
-            background: rgba(180, 140, 110, 0.1);
+            background: rgba(180, 150, 120, 0.08);
             color: #5a4a3a;
         }
         .admin-search {
@@ -176,26 +157,21 @@
             gap: 10px;
             flex-wrap: wrap;
         }
-        .admin-search input {
-            flex: 1;
-            min-width: 200px;
-        }
+        .admin-search input { flex: 1; min-width: 200px; }
         .admin-stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 12px;
             margin: 16px 0;
             padding: 16px;
-            background: rgba(245, 240, 234, 0.3);
+            background: rgba(245, 240, 234, 0.2);
             border-radius: 16px;
-            border: 1px solid rgba(180, 140, 110, 0.04);
+            border: 1px solid rgba(180, 150, 120, 0.04);
         }
-        .admin-stats div {
-            text-align: center;
-        }
+        .admin-stats div { text-align: center; }
         .admin-stats .number {
             font-size: 24px;
-            font-weight: 400;
+            font-weight: 300;
             color: #2d241a;
         }
         .admin-stats .label {
@@ -238,12 +214,8 @@
             transition: 0.3s;
             font-weight: 300;
         }
-        .back-link:hover {
-            color: #2d241a;
-        }
-        .password-input {
-            margin-bottom: 16px;
-        }
+        .back-link:hover { color: #2d241a; }
+        .password-input { margin-bottom: 16px; }
         .toast {
             position: fixed;
             bottom: 30px;
@@ -255,33 +227,33 @@
             border-radius: 30px;
             color: #2d241a;
             font-size: 14px;
-            font-weight: 400;
+            font-weight: 300;
             z-index: 9999;
             animation: toastIn 0.4s ease;
             border: 1px solid rgba(255, 252, 248, 0.3);
-            box-shadow: 0 8px 24px rgba(120, 90, 60, 0.1);
+            box-shadow: 0 8px 24px rgba(120, 90, 60, 0.08);
         }
         @keyframes toastIn {
             0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
             100% { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
         .image-upload-area {
-            border: 2px dashed rgba(180, 140, 110, 0.15);
+            border: 2px dashed rgba(180, 150, 120, 0.12);
             border-radius: 16px;
             padding: 20px;
             text-align: center;
             margin: 6px 0 14px;
             transition: 0.3s;
             cursor: pointer;
-            background: rgba(245, 240, 234, 0.2);
+            background: rgba(245, 240, 234, 0.15);
         }
         .image-upload-area:hover {
             border-color: #b48b6e;
-            background: rgba(255, 252, 248, 0.4);
+            background: rgba(255, 252, 248, 0.3);
         }
         .image-upload-area.dragover {
             border-color: #b48b6e;
-            background: rgba(245, 240, 234, 0.4);
+            background: rgba(245, 240, 234, 0.3);
         }
         .image-upload-area .icon { font-size: 32px; display: block; margin-bottom: 4px; }
         .image-upload-area .text { color: #7b5f47; font-size: 14px; font-weight: 300; }
@@ -298,13 +270,9 @@
             height: 80px;
             border-radius: 12px;
             overflow: hidden;
-            border: 1px solid rgba(180, 140, 110, 0.06);
+            border: 1px solid rgba(180, 150, 120, 0.04);
         }
-        .image-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .image-preview img { width: 100%; height: 100%; object-fit: cover; }
         .image-preview .remove-image {
             position: absolute;
             top: -6px;
@@ -335,7 +303,7 @@
         }
         .spec-row input { margin: 0; }
         .spec-row .remove-spec {
-            background: rgba(180, 140, 110, 0.1);
+            background: rgba(180, 150, 120, 0.08);
             border: none;
             color: #5a4a3a;
             width: 30px;
@@ -348,11 +316,9 @@
             justify-content: center;
             transition: 0.3s;
         }
-        .spec-row .remove-spec:hover {
-            background: rgba(180, 140, 110, 0.2);
-        }
+        .spec-row .remove-spec:hover { background: rgba(180, 150, 120, 0.16); }
         .add-spec-btn {
-            background: rgba(180, 140, 110, 0.1);
+            background: rgba(180, 150, 120, 0.08);
             border: none;
             color: #5a4a3a;
             padding: 8px 16px;
@@ -361,31 +327,29 @@
             cursor: pointer;
             transition: 0.3s;
             width: fit-content;
-            font-weight: 400;
+            font-weight: 300;
         }
-        .add-spec-btn:hover {
-            background: rgba(180, 140, 110, 0.2);
-        }
+        .add-spec-btn:hover { background: rgba(180, 150, 120, 0.16); }
         .categories-admin {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin: 10px 0 16px;
             padding: 12px;
-            background: rgba(245, 240, 234, 0.2);
+            background: rgba(245, 240, 234, 0.15);
             border-radius: 16px;
-            border: 1px solid rgba(180, 140, 110, 0.04);
+            border: 1px solid rgba(180, 150, 120, 0.04);
         }
         .category-tag {
             display: flex;
             align-items: center;
             gap: 6px;
-            background: rgba(255, 252, 248, 0.4);
+            background: rgba(255, 252, 248, 0.3);
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 14px;
             color: #2d241a;
-            border: 1px solid rgba(180, 140, 110, 0.06);
+            border: 1px solid rgba(180, 150, 120, 0.04);
         }
         .category-tag .remove-cat {
             background: none;
@@ -422,9 +386,14 @@
     </style>
 </head>
 <body>
-    <div class="bg-glow"></div>
-    <div class="bg-glow-2"></div>
-    <div class="container">
+    <div class="top-bar">
+        <div class="logo">
+            <span class="logo-icon"></span>
+            <span class="logo-text">атмосфера · админ</span>
+        </div>
+    </div>
+
+    <div class="container" style="max-width:800px;margin:0 auto;padding:0 20px;">
         <div class="admin-panel">
             <div id="loginForm" class="login-form active">
                 <h2>🔐 Вход в админ-панель</h2>
@@ -441,8 +410,8 @@
                     <div><div class="number" id="WatchCount">0</div><div class="label">Watch</div></div>
                 </div>
 
-                <div style="background:rgba(245,240,234,0.2);padding:16px;border-radius:16px;margin-bottom:16px;">
-                    <h3 style="font-size:16px;font-weight:400;margin-bottom:10px;color:#2d241a;">📂 Управление категориями</h3>
+                <div style="background:rgba(245,240,234,0.15);padding:16px;border-radius:16px;margin-bottom:16px;">
+                    <h3 style="font-size:16px;font-weight:300;margin-bottom:10px;color:#2d241a;">📂 Управление категориями</h3>
                     <div class="categories-admin" id="categoriesAdminList"></div>
                     <div class="add-category-row">
                         <input type="text" id="newCategoryInput" placeholder="Название новой категории" class="admin-input">
@@ -454,8 +423,8 @@
                     <input type="text" id="searchInput" placeholder="🔍 Поиск по названию..." class="admin-input" oninput="searchProducts()">
                 </div>
 
-                <div style="background:rgba(245,240,234,0.2);padding:16px;border-radius:16px;margin-bottom:16px;">
-                    <h3 id="formTitle" style="font-size:16px;font-weight:400;margin-bottom:12px;color:#2d241a;">➕ Добавить товар</h3>
+                <div style="background:rgba(245,240,234,0.15);padding:16px;border-radius:16px;margin-bottom:16px;">
+                    <h3 id="formTitle" style="font-size:16px;font-weight:300;margin-bottom:12px;color:#2d241a;">➕ Добавить товар</h3>
                     <input type="hidden" id="editId">
                     <div class="admin-row">
                         <input type="text" id="productName" placeholder="Название" class="admin-input">
@@ -463,7 +432,7 @@
                     </div>
                     <select id="productCategory" class="admin-input"></select>
                     
-                    <div style="background:rgba(255,252,248,0.2);border-radius:16px;padding:14px;margin:6px 0 14px;">
+                    <div style="background:rgba(255,252,248,0.15);border-radius:16px;padding:14px;margin:6px 0 14px;">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
                             <div style="font-size:12px;color:#7b5f47;text-transform:uppercase;letter-spacing:0.5px;">📋 Характеристики</div>
                             <button onclick="addSpecRow()" class="add-spec-btn">➕ Добавить</button>
