@@ -1,6 +1,7 @@
-// ===== УНИКАЛЬНЫЕ КЛЮЧИ ДЛЯ APPLE МАГАЗИНА =====
+// ===== УНИКАЛЬНЫЕ КЛЮЧИ =====
 const STORAGE_KEY = 'apple_shop_products';
 const CATEGORY_KEY = 'apple_shop_categories';
+const STATS_KEY = 'apple_shop_stats';
 
 let products = [];
 let categories = [];
@@ -8,6 +9,34 @@ let currentFilter = 'all';
 let currentProduct = null;
 let currentImageIndex = 0;
 
+// ===== СЧЁТЧИК ПОСЕЩЕНИЙ =====
+function trackVisit() {
+    const today = new Date().toDateString();
+    let stats = JSON.parse(localStorage.getItem(STATS_KEY)) || {
+        today: 0,
+        yesterday: 0,
+        total: 0,
+        lastDate: ''
+    };
+
+    // Если новый день — переносим сегодняшние во вчерашние
+    if (stats.lastDate && stats.lastDate !== today) {
+        stats.yesterday = stats.today;
+        stats.today = 0;
+    }
+
+    stats.today += 1;
+    stats.total += 1;
+    stats.lastDate = today;
+
+    localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+    return stats;
+}
+
+// Вызываем при загрузке страницы
+trackVisit();
+
+// ===== ОСНОВНЫЕ ФУНКЦИИ =====
 function formatPrice(price) {
     return price.toLocaleString('ru-RU') + ' ₽';
 }
