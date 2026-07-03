@@ -42,6 +42,7 @@
             margin-bottom: 24px;
             border-bottom: 1px solid rgba(180, 150, 120, 0.06);
             padding-bottom: 2px;
+            flex-wrap: wrap;
         }
 
         .tab-btn {
@@ -550,7 +551,7 @@
             .image-preview { width: 50px; height: 50px; }
             .add-category-row { flex-direction: column; }
             .add-category-row .admin-btn { width: 100%; }
-            .tabs { overflow-x: auto; }
+            .tabs { overflow-x: auto; flex-wrap: nowrap; }
             .tab-btn { padding: 8px 16px; font-size: 13px; white-space: nowrap; }
         }
 
@@ -589,13 +590,10 @@
 
                 <!-- ===== ВКЛАДКА 1: ТОВАРЫ ===== -->
                 <div id="tab-products" class="tab-content active">
-
-                    <!-- Поиск -->
                     <div class="admin-search">
                         <input type="text" id="searchInput" placeholder="🔍 Поиск по названию..." class="admin-input" oninput="searchProducts()">
                     </div>
 
-                    <!-- Форма добавления/редактирования -->
                     <div class="block">
                         <div class="block-title" id="formTitle">➕ Добавить товар</div>
                         <input type="hidden" id="editId">
@@ -607,7 +605,6 @@
 
                         <select id="productCategory" class="admin-input"></select>
 
-                        <!-- Характеристики -->
                         <div style="background:rgba(255,252,248,0.1);border-radius:6px;padding:12px;margin:6px 0 12px;">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
                                 <div style="font-size:12px;color:#7b5f47;text-transform:uppercase;letter-spacing:0.5px;">📋 Характеристики</div>
@@ -616,7 +613,6 @@
                             <div class="specs-container" id="specsContainer"></div>
                         </div>
 
-                        <!-- Загрузка изображений -->
                         <div class="image-upload-area" id="imageUploadArea" onclick="document.getElementById('imageInput').click()">
                             <span class="icon">📸</span>
                             <div class="text">Нажмите или перетащите фото</div>
@@ -639,7 +635,6 @@
                         </div>
                     </div>
 
-                    <!-- Инструменты -->
                     <div class="admin-toolbar">
                         <button onclick="sortProducts('name')" class="admin-btn secondary">По имени</button>
                         <button onclick="sortProducts('price')" class="admin-btn secondary">По цене</button>
@@ -650,7 +645,6 @@
                         <button onclick="if(confirm('Удалить все товары?')){clearAllProducts();}" class="admin-btn danger">🗑️ Очистить всё</button>
                     </div>
 
-                    <!-- Список товаров -->
                     <div class="admin-list" id="adminProductList">
                         <div class="empty-state">Загрузка товаров...</div>
                     </div>
@@ -660,7 +654,6 @@
                 <div id="tab-stats" class="tab-content">
                     <h3 style="font-weight:400;margin-bottom:16px;color:#1d1b1a;font-size:18px;">📊 Статистика</h3>
 
-                    <!-- Посещения -->
                     <div class="block">
                         <div class="block-title">👁️ Посещения</div>
                         <div class="stats-grid" id="statsVisits">
@@ -682,7 +675,6 @@
                         </div>
                     </div>
 
-                    <!-- Товары -->
                     <div class="block">
                         <div class="block-title">📦 Товары</div>
                         <div class="stats-products" id="statsProducts">
