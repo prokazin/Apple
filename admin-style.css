@@ -1,4 +1,4 @@
-/* ===== ОБЩИЕ СТИЛИ АДМИН-ПАНЕЛИ ===== */
+/* ===== АДМИН-ПАНЕЛЬ ===== */
 .admin-panel {
     max-width: 1000px;
     margin: 30px auto;
@@ -471,6 +471,19 @@ textarea.admin-input { min-height: 70px; resize: vertical; }
 }
 .debug-btn:hover { background: rgba(255, 252, 248, 0.6); }
 
+/* ===== ТОП-БАР ===== */
+.top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 32px;
+    background: rgba(232, 227, 220, 0.92);
+    border-bottom: 1px solid rgba(180, 150, 120, 0.08);
+}
+
 /* ===== АДАПТИВ ===== */
 @media (max-width: 640px) {
     .admin-panel { padding: 16px; margin: 12px 8px; border-radius: 8px; }
@@ -489,6 +502,7 @@ textarea.admin-input { min-height: 70px; resize: vertical; }
     .add-category-row .admin-btn { width: 100%; }
     .tabs { overflow-x: auto; flex-wrap: nowrap; }
     .tab-btn { padding: 8px 16px; font-size: 13px; white-space: nowrap; }
+    .top-bar { padding: 10px 16px; }
 }
 @media (min-width: 641px) and (max-width: 768px) {
     .stats-grid { grid-template-columns: repeat(3, 1fr); }
